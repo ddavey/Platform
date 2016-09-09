@@ -1,0 +1,36 @@
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"  %>
+<script src="<spring:url value="/resources/js/jquery-2.2.1.min.js" />"></script>
+<script src="<spring:url value="/resources/js/bootstrap.js" />"></script>
+<script src="<spring:url value="/resources/js/fields.js" />"></script>
+
+<link rel="stylesheet" href='<spring:url value="/resources/css/bootstrap.css"/>' >
+<link rel="stylesheet" href='<spring:url value="/resources/css/common.css"/>' >
+<fmt:setLocale value="${lang}"/>
+<fmt:setBundle basename="resources/captions" />
+
+
+<c:if test="${requestResult.error}">
+	<script>
+	$(document).ready(function(){
+	var errorMap = {};
+		<c:forEach items="${requestResult.errors}" var="err">
+			errorMap["${err.key}"] = "${err.value}";
+		</c:forEach>
+		
+		displayFieldErrors(errorMap);
+		
+		var validLst = [];
+		
+		<c:forEach items="${requestResult.valid}" var="validFld">
+			validLst.push("${validFld}");
+		</c:forEach>
+		
+		displayCorrectFieldValues(validLst);
+	});
+	
+	</script>
+	
+</c:if>

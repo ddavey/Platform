@@ -33,6 +33,7 @@
 
         
         <mapping class="com.sw.ncs.server.customer.Customer"/>
+         <mapping class="com.sw.ncs.server.synchronization.SynchronizationEntry"/>
         <!--mapping class="com.sw.customers.accounts.ApplicationSession"/>
         <mapping class="com.sw.customers.database.sequencing.SequenceId"/>
         <mapping class="com.sw.customers.database.sequencing.Sequence"/>

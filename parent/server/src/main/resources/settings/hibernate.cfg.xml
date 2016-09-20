@@ -36,6 +36,7 @@
         <mapping class="com.sw.ncs.server.customer.Session"/>
         <mapping class="com.sw.ncs.server.db.Sequence"/>
         <mapping class="com.sw.ncs.server.system.settings.SystemSetting"/>
+        <mapping class="com.sw.ncs.server.synchronization.SynchronizationEntry"/>
 
     </session-factory>
 

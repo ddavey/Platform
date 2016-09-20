@@ -16,6 +16,7 @@ import com.sw.ncs.server.db.EntityValidationException;
 import com.sw.ncs.server.filter.ApplicationFilter;
 import com.sw.ncs.server.synchronization.Synchronization;
 import com.sw.ncs.server.synchronization.LocalSynchronizationControl;
+import com.sw.ncs.server.synchronization.Synchronization.Entity;
 import com.sw.ncs.server.utils.encryption.KeyGenerator;
 
 
@@ -117,7 +118,7 @@ public class CustomerControl extends Observable{
 			validationException = eve;
 		}
 		
-		try{
+	//	try{
 			account = new Account();
 			account.setFirstName(registration.getfName());
 			account.setLastName(registration.getlName());
@@ -125,7 +126,7 @@ public class CustomerControl extends Observable{
 			account.setUsername(registration.getUser());
 			account.setPassword(registration.getPw());
 			accountControl = AccountControl.getInstance(customer.getId());
-			accountControl.save(account,session);
+			/*	accountControl.save(account,session);
 			
 			
 			
@@ -144,7 +145,7 @@ public class CustomerControl extends Observable{
 			}
 			throw validationException;
 		}
-		
+		*/
 		session.commitTransaction();
 		session.flush();
 		
@@ -158,6 +159,7 @@ public class CustomerControl extends Observable{
 		
 		
 		session.close();
+		
 		
 		return customer;
 	}
@@ -175,7 +177,7 @@ public class CustomerControl extends Observable{
 			customerUrlMap.put(customer.getPath(), customer);
 			customerIdMap.put(customer.getId(),customer);
 		//	notifyObservers(customer);
-			Synchronization.getInstance(customer.getId()).notify(customer, Synchronization.ChangeType.CREATE  , Synchronization.Entity.CUSTOMER);
+			Synchronization.getInstance(-1).notify(Entity.CUSTOMER);
 		}
 		return customer;
 	}

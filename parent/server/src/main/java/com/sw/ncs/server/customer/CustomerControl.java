@@ -14,13 +14,13 @@ import com.sw.ncs.server.db.Database;
 import com.sw.ncs.server.db.DbSession;
 import com.sw.ncs.server.db.EntityValidationException;
 import com.sw.ncs.server.filter.ApplicationFilter;
+import com.sw.ncs.server.synchronization.AbstractSynchronizationHandler;
 import com.sw.ncs.server.synchronization.Synchronization;
-import com.sw.ncs.server.synchronization.LocalSynchronizationControl;
 import com.sw.ncs.server.synchronization.Synchronization.Entity;
 import com.sw.ncs.server.utils.encryption.KeyGenerator;
 
 
-public class CustomerControl extends Observable{
+public class CustomerControl {
 	private static CustomerControl instance;
 	private static final Map<Long,Customer> customerIdMap = new HashMap<Long,Customer>();
 	private static final Map<String,Customer> customerUrlMap = new HashMap<String,Customer>();
@@ -36,8 +36,22 @@ public class CustomerControl extends Observable{
 	private CustomerControl(){
 	}
 	
+	public void reload(){
+		List<Customer> newCustomers = dbList(null);
+		newCustomers = newCustomers.subList(customers.size(), newCustomers.size());
+		customers.addAll(newCustomers);
+		for(Customer customer : newCustomers){
+			customerIdMap.put(customer.getId(),customer);
+			customerUrlMap.put(customer.getPath(), customer);
+		}
+	}
+	
 	public Customer get(long customerNo,DbSession session){
 		boolean sessionNull = session == null;
+		
+		if(customerIdMap.containsKey(customerNo)){
+			return customerIdMap.get(customerNo);
+		}
 		
 		if(sessionNull){
 			session = Database.getInstance().getSession(-1);
@@ -60,7 +74,7 @@ public class CustomerControl extends Observable{
 		
 		if(customerIdMap.isEmpty()){
 			Query query = session.createQuery("from Customer");
-			List<Customer> customers = (List<Customer>)query.list();
+			List<Customer> customers = dbList(session);
 			this.customers.addAll(customers);
 			for(Customer customer : customers){
 				customerIdMap.put(customer.getId(), customer);
@@ -73,6 +87,23 @@ public class CustomerControl extends Observable{
 		
 		
 		
+	}
+	
+	private List<Customer> dbList(DbSession session){
+		boolean sessionNull = session == null;
+		
+		if(sessionNull){
+			session = Database.getInstance().getSession(Database.DEFAULT_DB);
+		}
+		
+		Query query = session.createQuery("from Customer");
+		List<Customer> customers = (List<Customer>)query.list();
+		
+		if(sessionNull){
+			session.close();
+		}
+		
+		return customers;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -113,12 +144,15 @@ public class CustomerControl extends Observable{
 		Account account = null;
 		try{
 			save(customer,session);
-			
+			session.getTransaction().commit();
+			session.close();
+			session = Database.getInstance().getSession(customer.getId());
+			session.beginTransaction();
 		}catch(EntityValidationException eve){
 			validationException = eve;
 		}
 		
-	//	try{
+		try{
 			account = new Account();
 			account.setFirstName(registration.getfName());
 			account.setLastName(registration.getlName());
@@ -126,7 +160,7 @@ public class CustomerControl extends Observable{
 			account.setUsername(registration.getUser());
 			account.setPassword(registration.getPw());
 			accountControl = AccountControl.getInstance(customer.getId());
-			/*	accountControl.save(account,session);
+			accountControl.save(account,session);
 			
 			
 			
@@ -145,7 +179,7 @@ public class CustomerControl extends Observable{
 			}
 			throw validationException;
 		}
-		*/
+		
 		session.commitTransaction();
 		session.flush();
 		
@@ -174,10 +208,11 @@ public class CustomerControl extends Observable{
 		if(validate(customer)){
 			customer.setSerialNo(generateSerialNo());
 			session.save(customer);
+			customers.add(customer);
 			customerUrlMap.put(customer.getPath(), customer);
 			customerIdMap.put(customer.getId(),customer);
-		//	notifyObservers(customer);
-			Synchronization.getInstance(-1).notify(Entity.CUSTOMER);
+			Database.getInstance().getSession(customer.getId()).close();
+			Synchronization.getInstance(-1).notify(Entity.CUSTOMER,session);
 		}
 		return customer;
 	}

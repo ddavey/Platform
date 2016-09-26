@@ -14,7 +14,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.sw.ncs.server.customer.Customer;
 import com.sw.ncs.server.customer.CustomerControl;
-import com.sw.ncs.server.customer.CustomerCreationEventHandler;
 import com.sw.ncs.server.db.AbstractDatabaseEventHandler;
 import com.sw.ncs.server.db.IEntity;
 import com.sw.ncs.server.synchronization.AbstractSynchronizationHandler;
@@ -24,28 +23,19 @@ import sun.misc.BASE64Encoder;
 
 public class Encryption{
 	
-	public static AbstractSynchronizationHandler synchHandler = new AbstractSynchronizationHandler(){
-		@Override
-		public void afterCreate(Object object) {
-			if(object.getClass() == Customer.class){
-				Customer customer = (Customer) object;
-				instances.put(customer.getId(), new Encryption(customer));
-			}
-		}
-	};
+	
 	
 
 	private static final BASE64Encoder encoder = new BASE64Encoder();
 	private static final BASE64Decoder decoder = new BASE64Decoder();
 	private String serialNumber;
 	private static Map<Long,Encryption> instances = new HashMap<Long,Encryption>();
-	private static final CustomerControl customerControl = CustomerControl.getInstance();
 	
 	
 	public static Encryption getInstance(long customerNo){
 		
 		if(!instances.containsKey(customerNo)){
-			Customer customer = customerControl.get(customerNo, null);
+			Customer customer = CustomerControl.getInstance().get(customerNo, null);
 			if(customer!=null){
 				instances.put(customerNo, new Encryption(customer));
 			}

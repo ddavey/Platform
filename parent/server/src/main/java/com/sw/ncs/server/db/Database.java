@@ -50,25 +50,29 @@ public class Database {
 		List<Customer> customers = CustomerControl.getInstance().list(session);
 		session.close();
 		for(Customer customer : customers){
-			setUpCustomerConfiguration(customer);
+			setUpCustomerConfiguration(customer.getId());
 		}
 		
 	}
 	
-	private void setUpCustomerConfiguration(Customer customer){
+	private void setUpCustomerConfiguration(long customerId){
 		Configuration customerConfig = new Configuration().configure("settings/hibernate.cfg.xml");
 		Properties properties = customerConfig.getProperties();
 		String connectionUrl = properties.getProperty("connection.url");
-		connectionUrl = connectionUrl.substring(0, connectionUrl.lastIndexOf("/"))+"/"+DEFAULT_CUSTOMER_DB_NAME+"_"+customer.getId()+"?createDatabaseIfNotExist=true";
+		connectionUrl = connectionUrl.substring(0, connectionUrl.lastIndexOf("/"))+"/"+DEFAULT_CUSTOMER_DB_NAME+"_"+customerId+"?createDatabaseIfNotExist=true";
 		customerConfig.setProperty("hibernate.connection.url", connectionUrl);
 		StandardServiceRegistryBuilder ssrb = new StandardServiceRegistryBuilder().applySettings(properties);
-		sessionFactorys.put(customer.getId(),customerConfig.buildSessionFactory(ssrb.build()));
-		DbSession session = new DbSession(sessionFactorys.get(customer.getId()).openSession());
+		sessionFactorys.put(customerId,customerConfig.buildSessionFactory(ssrb.build()));
+		DbSession session = new DbSession(sessionFactorys.get(customerId).openSession());
 		session.close();
 		
 	}
 	
 	public DbSession getSession(long customerNo){
+		if(!sessionFactorys.containsKey(customerNo)){
+			setUpCustomerConfiguration(customerNo);
+		}
+		
 		return new DbSession(sessionFactorys.get(customerNo).openSession());
 	}
 }

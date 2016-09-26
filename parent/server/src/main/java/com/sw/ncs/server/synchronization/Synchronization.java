@@ -43,21 +43,12 @@ public class Synchronization extends SynchronizationConstants{
 	public static enum Entity {CUSTOMER,ACCOUNT};
 	public static enum ChangeType {CREATE,UPDATE,DELETE};
 	
-	private static final Map<Entity,Map<ChangeType,List<AbstractSynchronizationHandler>>> syncEvents = 
-			new HashMap<Entity,Map<ChangeType,List<AbstractSynchronizationHandler>>>();
+	private static final Map<Entity,List<AbstractSynchronizationHandler>> syncEvents = 
+			new HashMap<Entity,List<AbstractSynchronizationHandler>>();
 	
-	public void notify(Object object,Synchronization.ChangeType changeType,Synchronization.Entity entity){
-		
-		List<AbstractSynchronizationHandler> handlerList = syncEvents.get(entity).get(changeType);
-		for(AbstractSynchronizationHandler handler : handlerList){
-			switch(changeType){
-				case CREATE:handler.afterCreate(object); break;
-			}
-		}
-	}
+
 	
-	public synchronized void notify(Entity entity){
-		DbSession session = Database.getInstance().getSession(customerNo);
+	public synchronized void notify(Entity entity,DbSession session){
 		Query query = session.createQuery("From SynchronizationEntry where entity = :entity");
 		query.setString("entity", entity.toString());
 		SynchronizationEntry entry = (SynchronizationEntry) query.uniqueResult();
@@ -69,10 +60,7 @@ public class Synchronization extends SynchronizationConstants{
 		entry.setHost(hostname);
 		
 		entry.setDate(System.currentTimeMillis());
-		session.beginTransaction();
 		session.save(entry);
-		session.commitTransaction();
-		session.close();
 	}
 	
 	private Synchronization(long customerNo){
@@ -91,11 +79,16 @@ public class Synchronization extends SynchronizationConstants{
 			sync.processMessages(sync.list());
 		}
 		
-		
 	}
 	
-	private void processMessages(List<SynchronizationEntry> message){
-		
+	private void processMessages(List<SynchronizationEntry> messages){
+		for(SynchronizationEntry syncMsg : messages){
+			List<AbstractSynchronizationHandler> handlers = syncEvents.get(Entity.valueOf(syncMsg.getEntity()));
+			for(AbstractSynchronizationHandler handler :handlers){
+				handler.update();
+			}
+			
+		}
 	}
 	
 	private List<SynchronizationEntry> list(){
@@ -106,14 +99,6 @@ public class Synchronization extends SynchronizationConstants{
 		List<SynchronizationEntry> syncEntries = query.list();
 		session.close();
 		return syncEntries;
-	}
-	
-	private long getEntityId(Object object){
-		if(object.getClass() == Customer.class){
-			return ((Customer)object).getId();
-		}else{
-			return -1;
-		}
 	}
 	
 	public static Synchronization getInstance(long customerNo){
@@ -148,19 +133,12 @@ public class Synchronization extends SynchronizationConstants{
 	}
 	
 	
-	public static void addListener(Entity entity,ChangeType changeType,AbstractSynchronizationHandler handler){
+	public static void addListener(Entity entity,AbstractSynchronizationHandler handler){
 		if(!syncEvents.containsKey(entity)){
-			syncEvents.put(entity, new HashMap<ChangeType,List<AbstractSynchronizationHandler>>());
+			syncEvents.put(entity, new ArrayList<AbstractSynchronizationHandler>());
 		}
 		
-		if(!syncEvents.get(entity).containsKey(changeType)){
-			syncEvents.get(entity).put(changeType,new ArrayList<AbstractSynchronizationHandler>());
-		}
-		
-		if(!syncEvents.get(entity).get(changeType).contains(handler)){
-			syncEvents.get(entity).get(changeType).add(handler);
-		}
-		
+		syncEvents.get(entity).add(handler);
 		
 	}
 	

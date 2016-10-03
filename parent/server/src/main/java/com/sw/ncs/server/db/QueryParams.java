@@ -39,13 +39,21 @@ public class QueryParams {
 	}
 	
 	String getHqlSearchQuery(){
-		StringBuilder builder = new StringBuilder("where id.customerNo = :customerNo");
+		StringBuilder builder = new StringBuilder();
 		
 		if(search != null && !search.isEmpty()){
+			builder.append(" where ");
 			List<Logic> groupedLogic = new ArrayList<Logic>();
 			groupedLogic.add(new And(new Group(search)));
+			boolean first = true;
+			String strCondition;
 			for(Logic logic : groupedLogic){
-				builder.append(" "+logic.getHqlString());
+				strCondition = " "+logic.getHqlString();
+				if(first){
+					strCondition = strCondition.replaceFirst("AND","").replaceFirst("OR", "");
+					first = false;
+				}
+				builder.append(strCondition);
 			}
 		}
 		

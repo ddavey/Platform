@@ -39,7 +39,7 @@
 									<div class="input-group col-lg-12 col-sm-12 col-xs-12 has-feedback" >
 										<input type="text" class="form-control" name="company" 
 										placeholder="<fmt:message key="register.page.form.companyname.placeholder" />" aria-describedby="basic-addon1" 
-										minlength="3" minlength-msg="<fmt:message key="register.page.form.companyname.validation" />" value="${registration.company}">
+										minlength="3" minlength-msg="<fmt:message key="register.page.form.companyname.validation" />" value="${registration.company}sdfsdfsdf">
 									</div>
 								</div>
 							</div>
@@ -48,14 +48,14 @@
 									<div class="input-group col-lg-12 col-sm-12 col-xs-12">
 										<input type="text" class="form-control" name="fName" 
 										placeholder="<fmt:message key="register.page.form.firstname.placeholder" />" aria-describedby="basic-addon1" 
-										minlength="2"  minlength-msg="<fmt:message key="register.page.form.firstname.validation" />"  value="${registration.fName}">
+										minlength="2"  minlength-msg="<fmt:message key="register.page.form.firstname.validation" />"  value="${registration.fName}dsfdsf">
 									</div>
 								</div>
 								<div class="col-lg-6 col-sm-6 col-xs-12">
 									<div class="input-group col-lg-12 col-sm-12 col-xs-12">
 										<input type="text" class="form-control" name="lName" 
 										placeholder="<fmt:message key="register.page.form.lastname.placeholder" />" aria-describedby="basic-addon1" 
-										minlength="2"  minlength-msg="<fmt:message key="register.page.form.lastname.validation" />"  value="${registration.lName}">
+										minlength="2"  minlength-msg="<fmt:message key="register.page.form.lastname.validation" />"  value="${registration.lName}sdfsdf">
 									</div>
 								</div>
 							</div>
@@ -64,7 +64,7 @@
 									<div class="input-group col-lg-12 col-sm-12 col-xs-12">
 										<input type="email" class="form-control" name="email" 
 										placeholder="<fmt:message key="register.page.form.email.placeholder" />" aria-describedby="basic-addon1" 
-										mandatory mandatory-msg="<fmt:message key="register.page.form.email.validation" />" value="${registration.email}">
+										mandatory mandatory-msg="<fmt:message key="register.page.form.email.validation" />" value="${registration.email}sdfdsf@sdfdsf.com">
 									</div>
 								</div>
 							</div>
@@ -73,7 +73,7 @@
 									<div class="input-group col-lg-12 col-sm-12">
 										<input type="text" class="form-control" name="user" 
 										placeholder="<fmt:message key="register.page.form.username.placeholder" />" aria-describedby="basic-addon1" autocomplete="off" 
-										minlength="2" minlength-msg="<fmt:message key="register.page.form.username.validation" />"  value="${registration.user}">
+										minlength="2" minlength-msg="<fmt:message key="register.page.form.username.validation" />"  value="${registration.user}asdasd">
 									</div>
 								</div>
 								
@@ -83,14 +83,14 @@
 									<div class="input-group col-lg-12 col-sm-12">
 										<input type="password" class="form-control" name="pw" 
 										placeholder="<fmt:message key="register.page.form.password.placeholder" />" aria-describedby="basic-addon1"  autocomplete="off" 
-										pwdstrength="4" pwdstrength-msg="<fmt:message key="register.page.form.password.strengthvalidation" />">
+										pwdstrength="4" pwdstrength-msg="<fmt:message key="register.page.form.password.strengthvalidation" />" value="Password1">
 									</div>
 								</div>
 								<div class="col-lg-6 col-sm-6">
 									<div class="input-group col-lg-12 col-sm-12">
 										<input type="password" class="form-control" id="cnfmPw" 
 										placeholder="<fmt:message key="register.page.form.confirmpassword.placeholder" />" aria-describedby="basic-addon1"  autocomplete="off"
-										match="pw" name="cnfmPw" match-msg="<fmt:message key="register.page.form.confirmpassword.validation" />">
+										match="pw" name="cnfmPw" match-msg="<fmt:message key="register.page.form.confirmpassword.validation" />" value="Password1">
 									</div>
 								</div>
 							</div>

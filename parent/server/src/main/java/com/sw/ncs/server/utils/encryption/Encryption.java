@@ -64,9 +64,8 @@ public class Encryption{
 			cipher = Cipher.getInstance("AES");
 			cipher.init(Cipher.ENCRYPT_MODE, keySpec);
 		        byte[] encVal = cipher.doFinal(value.getBytes());
-		        serialNumber = encoder.encode(serialNumber.getBytes());
 		       
-		        encryptedValue = serialNumber.substring(0,22) + encoder.encode(encVal);
+		        encryptedValue = encoder.encode(encVal);
 		      
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block

@@ -187,7 +187,7 @@ public class CustomerControl {
 		try {
 			accountControl.login(account.getUsername(),registration.getPw(),httpSession,session);
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 		
 		

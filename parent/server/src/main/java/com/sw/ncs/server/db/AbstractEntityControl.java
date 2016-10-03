@@ -96,7 +96,6 @@ public abstract class AbstractEntityControl implements IEntityControl{
 			exploreLogic(params.getSearch(),query,null);
 		}
 		
-		query.setLong("customerNo", customerNo);
 	}
 	
 	private void exploreLogic(List<Logic> logicList,Query query,List<String> paramsSet){

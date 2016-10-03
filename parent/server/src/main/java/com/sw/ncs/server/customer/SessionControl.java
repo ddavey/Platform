@@ -41,9 +41,8 @@ class SessionControl {
 	}
 	
 	private boolean validate(String sessionId,DbSession dbSession){
-		Query query = dbSession.createQuery("select count(*) from Session where "+
-	"identifier.customerNo = :customerNo and identifier.sessionId = :sessionId");
-		
+		Query query = dbSession.createQuery("select count(*) from Session where id = :sessionId");
+		query.setString("sessionId", sessionId);
 		return (long)query.uniqueResult() == 0;
 	}
 	
